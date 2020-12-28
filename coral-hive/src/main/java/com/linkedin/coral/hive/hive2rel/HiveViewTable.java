@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2017-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -48,8 +48,7 @@ public class HiveViewTable extends HiveTable implements TranslatableTable {
     try {
       RelRoot root = relContext.expandView(relOptTable.getRowType(), hiveTable.getViewExpandedText(), schemaPath,
           ImmutableList.of(hiveTable.getTableName()));
-      root = root.withRel(
-          createCastRel(root.rel, relOptTable.getRowType(), RelFactories.DEFAULT_PROJECT_FACTORY));
+      root = root.withRel(createCastRel(root.rel, relOptTable.getRowType(), RelFactories.DEFAULT_PROJECT_FACTORY));
       //root = root.withRel(RelOptUtil.createCastRel(root.rel, relOptTable.getRowType()));
       return root.rel;
     } catch (Exception e) {
@@ -58,9 +57,7 @@ public class HiveViewTable extends HiveTable implements TranslatableTable {
     }
   }
 
-  public static RelNode createCastRel(
-      final RelNode rel,
-      RelDataType castRowType,
+  public static RelNode createCastRel(final RelNode rel, RelDataType castRowType,
       RelFactories.ProjectFactory projectFactory) {
     Preconditions.checkNotNull(projectFactory);
 
@@ -78,7 +75,8 @@ public class HiveViewTable extends HiveTable implements TranslatableTable {
   // [LIHADOOP-34428]: Hive-based Dali readers allow extra fields on struct type columns to flow through. We
   // try to match that behavior. Hive-based Dali readers do not allow top level columns to flow through
   // Returns true if an explicit cast is required from rowType to castRowType, false otherwise
-  private static boolean isRowCastRequired(RelDataType rowType, RelDataType castRowType, RelDataTypeFactory typeFactory) {
+  private static boolean isRowCastRequired(RelDataType rowType, RelDataType castRowType,
+      RelDataTypeFactory typeFactory) {
     if (rowType == castRowType) {
       return false;
     }
@@ -148,8 +146,8 @@ public class HiveViewTable extends HiveTable implements TranslatableTable {
    *
    * @return if a CAST operator will be generated from inputFields to castToFields
    */
-  private static boolean isFieldListCastRequired(List<RelDataTypeField> inputFields, List<RelDataTypeField> castToFields,
-      RelDataTypeFactory typeFactory) {
+  private static boolean isFieldListCastRequired(List<RelDataTypeField> inputFields,
+      List<RelDataTypeField> castToFields, RelDataTypeFactory typeFactory) {
     if (inputFields.size() < castToFields.size()) {
       return true;
     }
@@ -177,4 +175,3 @@ public class HiveViewTable extends HiveTable implements TranslatableTable {
     return false;
   }
 }
-

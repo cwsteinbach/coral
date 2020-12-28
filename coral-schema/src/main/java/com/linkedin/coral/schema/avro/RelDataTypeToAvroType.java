@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2019-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -59,14 +59,14 @@ class RelDataTypeToAvroType {
     if (relDataType instanceof MapSqlType) {
       final MapSqlType mapSqlType = (MapSqlType) relDataType;
       if (!SqlTypeName.CHAR_TYPES.contains(mapSqlType.getKeyType().getSqlTypeName())) {
-        throw new UnsupportedOperationException("Key of Map can only be a String: "
-            + mapSqlType.getKeyType().getSqlTypeName().getName());
+        throw new UnsupportedOperationException(
+            "Key of Map can only be a String: " + mapSqlType.getKeyType().getSqlTypeName().getName());
       }
       return Schema.createMap(relDataTypeToAvroType(mapSqlType.getValueType(), recordName));
     }
 
-    throw new UnsupportedOperationException("Unsupported RelDataType to be converted to Avro type: "
-        + relDataType.toString());
+    throw new UnsupportedOperationException(
+        "Unsupported RelDataType to be converted to Avro type: " + relDataType.toString());
   }
 
   private static Schema relDataTypeToAvroType(RelDataType relDataType, String recordName) {
@@ -116,19 +116,16 @@ class RelDataTypeToAvroType {
    * @param doc documentation of Avro Record type
    * @return Avro type corresponding to RelDataType
    */
-  private static Schema relRecordTypeToAvroType(RelDataType relRecord,
-      List<String> fieldComments,
-      String recordName,
-      String recordNamespace,
-      String doc) {
+  private static Schema relRecordTypeToAvroType(RelDataType relRecord, List<String> fieldComments, String recordName,
+      String recordNamespace, String doc) {
     final List<Schema.Field> fields = new ArrayList();
     final Schema avroSchema = Schema.createRecord(recordName, doc, recordNamespace, false);
 
     for (RelDataTypeField relField : relRecord.getFieldList()) {
-      final String comment = fieldComments != null && fieldComments.size() > relField.getIndex() ? fieldComments.get(
-          relField.getIndex()) : null;
-      fields.add(new Schema.Field(
-          toAvroQualifiedName(relField.getName()), relDataTypeToAvroType(relField.getType(), toAvroQualifiedName(relField.getName())), comment, null));
+      final String comment = fieldComments != null && fieldComments.size() > relField.getIndex()
+          ? fieldComments.get(relField.getIndex()) : null;
+      fields.add(new Schema.Field(toAvroQualifiedName(relField.getName()),
+          relDataTypeToAvroType(relField.getType(), toAvroQualifiedName(relField.getName())), comment, null));
     }
 
     avroSchema.setFields(fields);

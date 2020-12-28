@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2017-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -93,8 +93,7 @@ public class RelToPrestoConverter extends RelToSqlConverter {
       return x;
     }
 
-    final Builder builder =
-        x.builder(e, Clause.SELECT);
+    final Builder builder = x.builder(e, Clause.SELECT);
     final List<SqlNode> selectList = new ArrayList<>();
     for (RexNode ref : e.getChildExps()) {
       SqlNode sqlExpr = builder.context.toSql(null, ref);
@@ -125,8 +124,7 @@ public class RelToPrestoConverter extends RelToSqlConverter {
   }
 
   private SqlCall as(SqlNode e, String alias) {
-    return SqlStdOperatorTable.AS.createCall(POS, e,
-        new SqlIdentifier(alias, POS));
+    return SqlStdOperatorTable.AS.createCall(POS, e, new SqlIdentifier(alias, POS));
   }
 
   private boolean isUnnestAll(Project project) {
@@ -138,8 +136,7 @@ public class RelToPrestoConverter extends RelToSqlConverter {
     }
 
     for (int i = 0; i < projExps.size(); i++) {
-      if (!(projExps.get(i) instanceof RexInputRef)
-        || ((RexInputRef) projExps.get(i)).getIndex() != i) {
+      if (!(projExps.get(i) instanceof RexInputRef) || ((RexInputRef) projExps.get(i)).getIndex() != i) {
         return false;
       }
     }
@@ -188,8 +185,7 @@ public class RelToPrestoConverter extends RelToSqlConverter {
     if (qualifiedName.size() > 2) {
       qualifiedName = qualifiedName.subList(qualifiedName.size() - 2, qualifiedName.size()); // take last two entries
     }
-    final SqlIdentifier identifier =
-        new SqlIdentifier(qualifiedName, SqlParserPos.ZERO);
+    final SqlIdentifier identifier = new SqlIdentifier(qualifiedName, SqlParserPos.ZERO);
     return result(identifier, ImmutableList.of(Clause.FROM), e, null);
   }
 
@@ -226,9 +222,8 @@ public class RelToPrestoConverter extends RelToSqlConverter {
           SqlStdOperatorTable.AS.createCall(POS, rightLateral, new SqlIdentifier(rightResult.neededAlias, POS));
     }
 
-    final SqlNode join =
-        new SqlJoin(POS, leftResult.asFrom(), SqlLiteral.createBoolean(false, POS), JoinType.CROSS.symbol(POS),
-            rightLateral, JoinConditionType.NONE.symbol(POS), null);
+    final SqlNode join = new SqlJoin(POS, leftResult.asFrom(), SqlLiteral.createBoolean(false, POS),
+        JoinType.CROSS.symbol(POS), rightLateral, JoinConditionType.NONE.symbol(POS), null);
     return result(join, leftResult, rightResult);
   }
 

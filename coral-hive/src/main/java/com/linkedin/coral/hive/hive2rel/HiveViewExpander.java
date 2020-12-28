@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2017-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -47,10 +47,8 @@ public class HiveViewExpander implements RelOptTable.ViewExpander {
     if (table == null) {
       throw new RuntimeException(String.format("Table %s.%s not found", dbName, tableName));
     }
-    ParseTreeBuilder treeBuilder = new ParseTreeBuilder(msc,
-        relContextProvider.getParseTreeBuilderConfig(),
-        relContextProvider.getHiveFunctionRegistry(),
-        relContextProvider.getDynamicHiveFunctionRegistry());
+    ParseTreeBuilder treeBuilder = new ParseTreeBuilder(msc, relContextProvider.getParseTreeBuilderConfig(),
+        relContextProvider.getHiveFunctionRegistry(), relContextProvider.getDynamicHiveFunctionRegistry());
     SqlNode viewNode = treeBuilder.processViewOrTable(table);
     return relContextProvider.getSqlToRelConverter().convertQuery(viewNode, true, true);
   }

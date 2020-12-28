@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2019-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -189,12 +189,11 @@ public class RelToPigLatinConverter {
    * @param outputRelation name of the variable to be outputted
    */
   private void visit(RelToPigBuilder state, LogicalUnion logicalUnion, String outputRelation) {
-    List<String> inputRelations = logicalUnion.getInputs().stream()
-        .map(input -> {
-          String inputRelation = state.getUniqueAlias();
-          visit(state, input, inputRelation);
-          return inputRelation;
-        }).collect(Collectors.toList());
+    List<String> inputRelations = logicalUnion.getInputs().stream().map(input -> {
+      String inputRelation = state.getUniqueAlias();
+      visit(state, input, inputRelation);
+      return inputRelation;
+    }).collect(Collectors.toList());
     state.addStatement(PigLogicalUnion.getScript(logicalUnion, outputRelation, inputRelations));
   }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2019-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -66,9 +66,7 @@ public class ViewToAvroSchemaConverter {
    *
    * @return avro schema for a given Dali view [dbName, viewName]
    */
-public Schema toAvroSchema(String dbName,
-    String tableOrViewName,
-    boolean strictMode) {
+  public Schema toAvroSchema(String dbName, String tableOrViewName, boolean strictMode) {
     Preconditions.checkNotNull(dbName);
     Preconditions.checkNotNull(tableOrViewName);
 
@@ -93,9 +91,7 @@ public Schema toAvroSchema(String dbName,
     return avroSchema;
   }
 
-  private Schema inferAvroSchema(String dbName,
-      String tableOrViewName,
-      boolean strictMode) {
+  private Schema inferAvroSchema(String dbName, String tableOrViewName, boolean strictMode) {
     Preconditions.checkNotNull(dbName);
     Preconditions.checkNotNull(tableOrViewName);
 
@@ -118,10 +114,7 @@ public Schema toAvroSchema(String dbName,
 
       // In flex mode, we assign a new set of namespace
       if (!strictMode) {
-        avroSchema = SchemaUtilities.setupNameAndNamespace(
-            schema,
-            tableOrViewName,
-            dbName + "." + tableOrViewName);
+        avroSchema = SchemaUtilities.setupNameAndNamespace(schema, tableOrViewName, dbName + "." + tableOrViewName);
       }
 
       return avroSchema;

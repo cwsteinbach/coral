@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2019-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -121,7 +121,8 @@ class RelDataTypeToPrestoTypeStringConverter {
       case INTERVAL_YEAR_MONTH:
       case NULL:
       default:
-        throw new RuntimeException(String.format("Unhandled RelDataType %s in Converter from RelDataType to Spark DataType", relDataType.getSqlTypeName()));
+        throw new RuntimeException(String.format(
+            "Unhandled RelDataType %s in Converter from RelDataType to Spark DataType", relDataType.getSqlTypeName()));
     }
   }
 
@@ -134,12 +135,8 @@ class RelDataTypeToPrestoTypeStringConverter {
   private static String buildStructDataTypeString(RelRecordType relRecordType) {
     List<String> structFieldStrings = new ArrayList<>();
     for (RelDataTypeField relDataTypeField : relRecordType.getFieldList()) {
-      structFieldStrings.add(
-          String.format("%s %s",
-              quoteReservedKeyword(relDataTypeField.getName()),
-              buildPrestoTypeString(relDataTypeField.getType())
-          )
-      );
+      structFieldStrings.add(String.format("%s %s", quoteReservedKeyword(relDataTypeField.getName()),
+          buildPrestoTypeString(relDataTypeField.getType())));
     }
     String subFieldsString = String.join(", ", structFieldStrings);
     return String.format("row(%s)", subFieldsString);

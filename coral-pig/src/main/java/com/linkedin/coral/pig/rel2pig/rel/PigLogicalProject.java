@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2019-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -38,8 +38,7 @@ public class PigLogicalProject {
     List<String> projectList = new ArrayList<>();
     for (int i = 0; i < logicalProject.getChildExps().size(); ++i) {
       RexNode rexNode = logicalProject.getChildExps().get(i);
-      projectList.add(String.format(FIELD_TEMPLATE,
-          PigRexUtils.convertRexNodeToPigExpression(rexNode, inputFieldNames),
+      projectList.add(String.format(FIELD_TEMPLATE, PigRexUtils.convertRexNodeToPigExpression(rexNode, inputFieldNames),
           outputFieldNames.get(i)));
     }
     String projectListString = String.join(", ", projectList);

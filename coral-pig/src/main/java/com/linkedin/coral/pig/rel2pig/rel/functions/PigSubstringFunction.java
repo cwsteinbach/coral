@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2019-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -54,8 +54,8 @@ public class PigSubstringFunction extends PigBuiltinFunction {
     // Otherwise, the endIndex can be set as:
     //     endIndex = SIZE(string)
     final String endIndex = rexCall.getOperands().size() >= 3
-        ? String.format(ADDITION_TEMPLATE, startIndex, PigRexUtils.convertRexNodeToPigExpression(
-            rexCall.getOperands().get(2), inputFieldNames))
+        ? String.format(ADDITION_TEMPLATE, startIndex,
+            PigRexUtils.convertRexNodeToPigExpression(rexCall.getOperands().get(2), inputFieldNames))
         : String.format(SIZE_FUNCTION_TEMPLATE, value);
     return Arrays.asList(value, startIndex, endIndex);
   }

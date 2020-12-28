@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2018-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -82,9 +82,7 @@ public class CoralSpark {
    */
   private static String constructSparkSQL(RelNode sparkRelNode) {
     SparkRelToSparkSqlConverter rel2sql = new SparkRelToSparkSqlConverter();
-    return rel2sql.visitChild(0, sparkRelNode)
-        .asStatement()
-        .accept(new SparkSqlRewriter())
+    return rel2sql.visitChild(0, sparkRelNode).asStatement().accept(new SparkSqlRewriter())
         .toSqlString(SparkSqlDialect.INSTANCE).getSql();
   }
 
@@ -99,12 +97,8 @@ public class CoralSpark {
    * depends on.
    */
   private static List<String> constructBaseTables(RelNode relNode) {
-    return RelOptUtil
-        .findAllTables(relNode)
-        .stream()
-        .map(RelOptTable::getQualifiedName)
-        .map(x -> String.join(".", x.get(1), x.get(2)))
-        .collect(Collectors.toList());
+    return RelOptUtil.findAllTables(relNode).stream().map(RelOptTable::getQualifiedName)
+        .map(x -> String.join(".", x.get(1), x.get(2))).collect(Collectors.toList());
 
   }
 

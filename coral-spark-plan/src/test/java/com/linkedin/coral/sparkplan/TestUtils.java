@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -49,17 +49,12 @@ public class TestUtils {
     }
 
     public List<String> getDbNames() {
-      return databases.stream()
-          .map(db -> db.name)
-          .collect(Collectors.toList());
+      return databases.stream().map(db -> db.name).collect(Collectors.toList());
     }
 
     public List<String> getTables(String db) {
-      return databases.stream()
-          .filter(d -> d.name == db)
-          .findFirst()
-          .orElseThrow(() -> new RuntimeException("DB " + db + " not found"))
-          .tables;
+      return databases.stream().filter(d -> d.name == db).findFirst()
+          .orElseThrow(() -> new RuntimeException("DB " + db + " not found")).tables;
     }
 
     public IMetaStoreClient getMetastoreClient() throws HiveException, MetaException {
@@ -80,7 +75,8 @@ public class TestUtils {
       driver.run("DROP TABLE IF EXISTS test.airport");
       driver.run("DROP DATABASE IF EXISTS test CASCADE");
       driver.run("CREATE DATABASE IF NOT EXISTS test");
-      driver.run("CREATE TABLE IF NOT EXISTS test.airport(name string, country string, area_code int, code string, datepartition string)");
+      driver.run(
+          "CREATE TABLE IF NOT EXISTS test.airport(name string, country string, area_code int, code string, datepartition string)");
       hive = testHive;
       return hive;
     } catch (Exception e) {

@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2019-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -51,8 +51,7 @@ public class PigRelUtils {
    * @return Mapping from list-index field reference to its associated Pig alias.
    */
   public static List<String> getOutputFieldNames(RelNode relNode) {
-    return relNode.getRowType().getFieldList().stream()
-        .map(field -> field.getKey().replace('$', 'x'))
+    return relNode.getRowType().getFieldList().stream().map(field -> field.getKey().replace('$', 'x'))
         .collect(Collectors.toList());
   }
 

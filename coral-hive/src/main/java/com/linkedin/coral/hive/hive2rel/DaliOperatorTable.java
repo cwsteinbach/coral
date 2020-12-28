@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2018-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -31,9 +31,8 @@ public class DaliOperatorTable implements SqlOperatorTable {
   // For now, we create another instance since the function registry is simple.
   private HiveFunctionResolver funcResolver;
 
-  public DaliOperatorTable(HiveFunctionRegistry registry,
-      ConcurrentHashMap<String, HiveFunction> dynamicRegistry) {
-    this.funcResolver =  new HiveFunctionResolver(registry, dynamicRegistry);
+  public DaliOperatorTable(HiveFunctionRegistry registry, ConcurrentHashMap<String, HiveFunction> dynamicRegistry) {
+    this.funcResolver = new HiveFunctionResolver(registry, dynamicRegistry);
   }
 
   /**
@@ -49,9 +48,7 @@ public class DaliOperatorTable implements SqlOperatorTable {
       SqlSyntax sqlSyntax, List<SqlOperator> list, SqlNameMatcher sqlNameMatcher) {
     String functionName = Util.last(sqlIdentifier.names);
     Collection<HiveFunction> functions = funcResolver.resolve(functionName, true);
-    functions.stream()
-        .map(HiveFunction::getSqlOperator)
-        .collect(Collectors.toCollection(() -> list));
+    functions.stream().map(HiveFunction::getSqlOperator).collect(Collectors.toCollection(() -> list));
   }
 
   @Override

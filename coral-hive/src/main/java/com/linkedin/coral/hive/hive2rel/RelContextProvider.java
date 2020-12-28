@@ -1,9 +1,10 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2017-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
 package com.linkedin.coral.hive.hive2rel;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.linkedin.coral.hive.hive2rel.functions.HiveFunction;
@@ -79,15 +80,11 @@ public class RelContextProvider {
     // We don't want each engine to register the driver. It may not also load correctly
     // if the service uses its own service loader (see Presto)
     driver = new Driver();
-    config = Frameworks.newConfigBuilder()
-        .convertletTable(convertletTable)
-        .defaultSchema(schemaPlus)
-        .typeSystem(new HiveTypeSystem())
-        .traitDefs((List<RelTraitDef>) null)
+    config = Frameworks.newConfigBuilder().convertletTable(convertletTable).defaultSchema(schemaPlus)
+        .typeSystem(new HiveTypeSystem()).traitDefs((List<RelTraitDef>) null)
         .operatorTable(ChainedSqlOperatorTable.of(SqlStdOperatorTable.instance(),
             new DaliOperatorTable(this.registry, this.dynamicRegistry)))
-        .programs(Programs.ofRules(Programs.RULE_SET))
-        .build();
+        .programs(Programs.ofRules(Programs.RULE_SET)).build();
   }
 
   /**
@@ -107,15 +104,11 @@ public class RelContextProvider {
     // We don't want each engine to register the driver. It may not also load correctly
     // if the service uses its own service loader (see Presto)
     driver = new Driver();
-    config = Frameworks.newConfigBuilder()
-        .convertletTable(convertletTable)
-        .defaultSchema(schemaPlus)
-        .typeSystem(new HiveTypeSystem())
-        .traitDefs((List<RelTraitDef>) null)
+    config = Frameworks.newConfigBuilder().convertletTable(convertletTable).defaultSchema(schemaPlus)
+        .typeSystem(new HiveTypeSystem()).traitDefs((List<RelTraitDef>) null)
         .operatorTable(ChainedSqlOperatorTable.of(SqlStdOperatorTable.instance(),
             new DaliOperatorTable(this.registry, this.dynamicRegistry)))
-        .programs(Programs.ofRules(Programs.RULE_SET))
-        .build();
+        .programs(Programs.ofRules(Programs.RULE_SET)).build();
   }
 
   /**
@@ -126,9 +119,11 @@ public class RelContextProvider {
   public HiveFunctionRegistry getHiveFunctionRegistry() {
     return this.registry;
   }
+
   public ConcurrentHashMap<String, HiveFunction> getDynamicHiveFunctionRegistry() {
     return this.dynamicRegistry;
   }
+
   /**
    * Gets {@link FrameworkConfig} for creation of various objects
    * from Calcite object model
@@ -138,11 +133,11 @@ public class RelContextProvider {
   public FrameworkConfig getConfig() {
     return config;
   }
+
   ParseTreeBuilder.Config getParseTreeBuilderConfig() {
-    return new ParseTreeBuilder.Config()
-        .setCatalogName(HiveSchema.ROOT_SCHEMA)
-        .setDefaultDB(HiveDbSchema.DEFAULT_DB);
+    return new ParseTreeBuilder.Config().setCatalogName(HiveSchema.ROOT_SCHEMA).setDefaultDB(HiveDbSchema.DEFAULT_DB);
   }
+
   HiveMetastoreClient getHiveMetastoreClient() {
     return hiveMetastoreClient;
   }
@@ -150,6 +145,7 @@ public class RelContextProvider {
   Schema getHiveSchema() {
     return (schema != null) ? this.schema : this.localMetastoreSchema;
   }
+
   /**
    * Gets {@link RelBuilder} object for generating relational algebra.
    *
@@ -166,6 +162,7 @@ public class RelContextProvider {
     }
     return relBuilder;
   }
+
   /**
    * Gets calcite catalog reader.
    *
@@ -182,11 +179,11 @@ public class RelContextProvider {
     }
     if (catalogReader == null) {
       catalogReader = new CalciteCatalogReader(config.getDefaultSchema().unwrap(CalciteSchema.class),
-          ImmutableList.of(HiveSchema.ROOT_SCHEMA), getRelBuilder().getTypeFactory(),
-          connectionConfig);
+          ImmutableList.of(HiveSchema.ROOT_SCHEMA), getRelBuilder().getTypeFactory(), connectionConfig);
     }
     return catalogReader;
   }
+
   /**
    * Gets hive sql validator.
    *

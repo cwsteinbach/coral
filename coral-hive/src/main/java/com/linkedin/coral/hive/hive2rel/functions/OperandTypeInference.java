@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2018-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -23,18 +23,16 @@ public class OperandTypeInference {
   }
 
   // expects operands to be (boolean, any, same_as_operand2)
-  public static final SqlOperandTypeInference BOOLEAN_ANY_SAME =
-      new SqlOperandTypeInference() {
-        @Override
-        public void inferOperandTypes(SqlCallBinding callBinding, RelDataType returnType,
-            RelDataType[] relDataTypes) {
-          final RelDataType unknownType = callBinding.getValidator().getUnknownType();
-          List<SqlNode> operands = callBinding.operands();
-          Preconditions.checkState(operands.size() == 3 && relDataTypes.length == 3);
-          RelDataTypeFactory typeFactory = callBinding.getTypeFactory();
-          relDataTypes[0] = typeFactory.createSqlType(SqlTypeName.BOOLEAN);
-          relDataTypes[1] = callBinding.getValidator().deriveType(callBinding.getScope(), operands.get(1));
-          relDataTypes[2] = callBinding.getValidator().deriveType(callBinding.getScope(), operands.get(2));
-        }
-      };
+  public static final SqlOperandTypeInference BOOLEAN_ANY_SAME = new SqlOperandTypeInference() {
+    @Override
+    public void inferOperandTypes(SqlCallBinding callBinding, RelDataType returnType, RelDataType[] relDataTypes) {
+      final RelDataType unknownType = callBinding.getValidator().getUnknownType();
+      List<SqlNode> operands = callBinding.operands();
+      Preconditions.checkState(operands.size() == 3 && relDataTypes.length == 3);
+      RelDataTypeFactory typeFactory = callBinding.getTypeFactory();
+      relDataTypes[0] = typeFactory.createSqlType(SqlTypeName.BOOLEAN);
+      relDataTypes[1] = callBinding.getValidator().deriveType(callBinding.getScope(), operands.get(1));
+      relDataTypes[2] = callBinding.getValidator().deriveType(callBinding.getScope(), operands.get(2));
+    }
+  };
 }

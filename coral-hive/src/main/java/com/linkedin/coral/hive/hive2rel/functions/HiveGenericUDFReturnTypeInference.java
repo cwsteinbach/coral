@@ -40,26 +40,21 @@ public class HiveGenericUDFReturnTypeInference implements SqlReturnTypeInference
     for (int i = 0; i < sqlOperatorBinding.getOperandCount(); i++) {
       inputObjectInspectors[i] = getHiveObjectInspector(sqlOperatorBinding.getOperandType(i));
     }
-    Object[] inputObjectInspectorsParam = {inputObjectInspectors};
+    Object[] inputObjectInspectorsParam = { inputObjectInspectors };
 
     try {
       Class udfClass = getUDFClass();
 
-      return getCalciteRelDataType(
-          (ObjectInspector) udfClass.getMethod(
-              "initialize",
-              ObjectInspector[].class
-          ).invoke(udfClass.newInstance(), inputObjectInspectorsParam),
-          sqlOperatorBinding.getTypeFactory()
-      );
+      return getCalciteRelDataType((ObjectInspector) udfClass.getMethod("initialize", ObjectInspector[].class)
+          .invoke(udfClass.newInstance(), inputObjectInspectorsParam), sqlOperatorBinding.getTypeFactory());
     } catch (NoSuchMethodException e) {
-      throw new RuntimeException("Unable to find org.apache.hadoop.hive.ql.udf.generic.GenericUDF.initialize() on: "
-          + _udfClassName, e);
+      throw new RuntimeException(
+          "Unable to find org.apache.hadoop.hive.ql.udf.generic.GenericUDF.initialize() on: " + _udfClassName, e);
     } catch (InstantiationException | IllegalAccessException e) {
       throw new RuntimeException("Unable to instantiate a new instance of " + _udfClassName, e);
     } catch (InvocationTargetException | IllegalArgumentException e) {
-      throw new RuntimeException("Unable to call org.apache.hadoop.hive.ql.udf.generic.GenericUDF.initialize() on: "
-          + _udfClassName, e);
+      throw new RuntimeException(
+          "Unable to call org.apache.hadoop.hive.ql.udf.generic.GenericUDF.initialize() on: " + _udfClassName, e);
     } catch (ClassNotFoundException e) {
       throw new RuntimeException("Could not load class  " + _udfClassName, e);
     }
@@ -85,7 +80,8 @@ public class HiveGenericUDFReturnTypeInference implements SqlReturnTypeInference
    * @param relDataTypeFactory RelDataTypeFactory used during the conversion
    * @return converted RelDataType based on input ObjectInspector
    */
-  private RelDataType getCalciteRelDataType(ObjectInspector hiveObjectInspector, RelDataTypeFactory relDataTypeFactory) {
+  private RelDataType getCalciteRelDataType(ObjectInspector hiveObjectInspector,
+      RelDataTypeFactory relDataTypeFactory) {
     TypeInfo typeInfo = TypeInfoUtils.getTypeInfoFromObjectInspector(hiveObjectInspector);
     RelDataType relDataType = TypeConverter.convert(typeInfo, relDataTypeFactory);
 
@@ -96,8 +92,7 @@ public class HiveGenericUDFReturnTypeInference implements SqlReturnTypeInference
     try {
       URL[] urls = _udfDependencies.stream()
           .flatMap(udfDependency -> _artifactsResolver.downloadDependencies(uri(udfDependency)).stream())
-          .map(uri -> url(uri))
-          .toArray(URL[]::new);
+          .map(uri -> url(uri)).toArray(URL[]::new);
 
       URLClassLoader classLoader = new URLClassLoader(urls, ClassLoader.getSystemClassLoader());
 

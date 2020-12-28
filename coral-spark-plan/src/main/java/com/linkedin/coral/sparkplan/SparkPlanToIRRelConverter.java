@@ -256,8 +256,8 @@ public class SparkPlanToIRRelConverter {
     while (!nodesToVisit.isEmpty()) {
       SparkPlanNode nodeToVisit = null;
       for (SparkPlanNode node : nodesToVisit) {
-        if (childrenOfNode.getOrDefault(node, new HashSet<>()).isEmpty() && (nodeToVisit == null
-            || nodeToVisit.getPosition() < node.getPosition())) {
+        if (childrenOfNode.getOrDefault(node, new HashSet<>()).isEmpty()
+            && (nodeToVisit == null || nodeToVisit.getPosition() < node.getPosition())) {
           nodeToVisit = node;
         }
       }
@@ -392,8 +392,8 @@ public class SparkPlanToIRRelConverter {
       } catch (RuntimeException e) {
         e.printStackTrace();
         predicateInfoMap.get(databaseTableName)
-            .add("Exception: " + e.getMessage() + "\n" + ExceptionUtils.getStackTrace(e) + (exceptionPredicate == null ? ""
-                : "\n" + "Predicate: [" + exceptionPredicate + "]"));
+            .add("Exception: " + e.getMessage() + "\n" + ExceptionUtils.getStackTrace(e)
+                + (exceptionPredicate == null ? "" : "\n" + "Predicate: [" + exceptionPredicate + "]"));
       }
     }
   }
@@ -402,7 +402,8 @@ public class SparkPlanToIRRelConverter {
     if ("".equals(modifiedFilterCondition.trim())) {
       return null;
     }
-    String sql = "SELECT * FROM " + databaseName + "." + tableName + " WHERE " + modifiedFilterCondition;;
+    String sql = "SELECT * FROM " + databaseName + "." + tableName + " WHERE " + modifiedFilterCondition;
+    ;
     RelNode convertedNode = hiveToRelConverter.convertSql(sql);
     return convertedNode.getInput(0).getChildExps().get(0);
   }

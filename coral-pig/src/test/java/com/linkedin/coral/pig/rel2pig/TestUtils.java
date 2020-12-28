@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2019-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -44,35 +44,27 @@ public class TestUtils {
     hiveToRelConverter = HiveToRelConverter.create(hiveMetastoreClient);
 
     // Views and tables used in unit tests
-    run(driver, String.join("\n", "",
-        "CREATE DATABASE IF NOT EXISTS pig"));
+    run(driver, String.join("\n", "", "CREATE DATABASE IF NOT EXISTS pig"));
 
-    run(driver, String.join("\n", "",
-        "CREATE DATABASE IF NOT EXISTS functions"));
+    run(driver, String.join("\n", "", "CREATE DATABASE IF NOT EXISTS functions"));
 
-    run(driver, String.join("\n", "",
-        "CREATE TABLE IF NOT EXISTS pig.tableA(a int, b int, c int)"));
+    run(driver, String.join("\n", "", "CREATE TABLE IF NOT EXISTS pig.tableA(a int, b int, c int)"));
 
-    run(driver, String.join("\n", "",
-        "CREATE TABLE IF NOT EXISTS pig.tableB(a int, b int)"));
+    run(driver, String.join("\n", "", "CREATE TABLE IF NOT EXISTS pig.tableB(a int, b int)"));
 
-    run(driver, String.join("\n", "",
-        "CREATE TABLE IF NOT EXISTS pig.tableLeft(a int, b int, c int)"));
+    run(driver, String.join("\n", "", "CREATE TABLE IF NOT EXISTS pig.tableLeft(a int, b int, c int)"));
 
-    run(driver, String.join("\n", "",
-        "CREATE TABLE IF NOT EXISTS pig.tableRight(d int, e int)"));
+    run(driver, String.join("\n", "", "CREATE TABLE IF NOT EXISTS pig.tableRight(d int, e int)"));
 
     run(driver, String.join("\n", "",
         "CREATE TABLE IF NOT EXISTS pig.tablestruct(a int, b struct<b0:int>, c struct<c0:struct<c00:int>>)"));
 
-    run(driver, String.join("\n", "",
-        "CREATE TABLE IF NOT EXISTS pig.tablemap(m1 map<string,int>)"));
+    run(driver, String.join("\n", "", "CREATE TABLE IF NOT EXISTS pig.tablemap(m1 map<string,int>)"));
 
     run(driver, String.join("\n", "",
         "CREATE TABLE IF NOT EXISTS pig.tablecast(i int, bi bigint, fl float, do double, str string, boo boolean)"));
 
-    run(driver, String.join("\n", "",
-        "CREATE TABLE IF NOT EXISTS pig.tablenull(nullablefield string, field string)"));
+    run(driver, String.join("\n", "", "CREATE TABLE IF NOT EXISTS pig.tablenull(nullablefield string, field string)"));
 
     run(driver, String.join("\n", "",
         "CREATE TABLE IF NOT EXISTS functions.tablefields(i_1 int, i0 int, i1 int, i2 int, i3 int, fl1 double, fl2 double, fl3 double, str string, substr string, exstr string, bootrue boolean, boofalse boolean, bin binary)"));

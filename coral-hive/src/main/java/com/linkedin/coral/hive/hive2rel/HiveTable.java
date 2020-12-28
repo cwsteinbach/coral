@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2017-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -70,13 +70,10 @@ public class HiveTable implements ScannableTable {
    */
   static final String TBLPROPERTIES_DEPENDENCIES_KEY = "dependencies";
 
-  private static Splitter tblpropertiesSplitter = Splitter
-      .on(Pattern.compile("\\s+"))
-      .omitEmptyStrings()
-      .trimResults();
+  private static Splitter tblpropertiesSplitter = Splitter.on(Pattern.compile("\\s+")).omitEmptyStrings().trimResults();
 
-  private static Splitter.MapSplitter functionsKeyValueSplitter = tblpropertiesSplitter
-      .withKeyValueSeparator(Splitter.on(":").limit(2));
+  private static Splitter.MapSplitter functionsKeyValueSplitter =
+      tblpropertiesSplitter.withKeyValueSeparator(Splitter.on(":").limit(2));
 
   /**
    * Constructor to create bridge from hive table to calcite table
@@ -118,9 +115,8 @@ public class HiveTable implements ScannableTable {
     checkDaliTable();
     final String propertyValue = hiveTable.getParameters().get(TBLPROPERTIES_DEPENDENCIES_KEY);
     if (propertyValue != null) {
-      return tblpropertiesSplitter.splitToList(propertyValue).stream().map(
-          s -> s.toLowerCase().startsWith("ivy://") ? s : "ivy://" + s
-      ).collect(Collectors.toList());
+      return tblpropertiesSplitter.splitToList(propertyValue).stream()
+          .map(s -> s.toLowerCase().startsWith("ivy://") ? s : "ivy://" + s).collect(Collectors.toList());
     }
     return ImmutableList.of();
   }
@@ -131,7 +127,7 @@ public class HiveTable implements ScannableTable {
 
   private void checkDaliTable() {
     // FIXME: this fails unit test right now
-   // Preconditions.checkState(isDaliTable());
+    // Preconditions.checkState(isDaliTable());
   }
 
   @Override
@@ -203,8 +199,8 @@ public class HiveTable implements ScannableTable {
         return Schema.TableType.TABLE;
       case INDEX_TABLE:
         return Schema.TableType.INDEX;
-        default:
-          throw new RuntimeException("Unknown table type: " + hiveTable.getTableType());
+      default:
+        throw new RuntimeException("Unknown table type: " + hiveTable.getTableType());
     }
   }
 

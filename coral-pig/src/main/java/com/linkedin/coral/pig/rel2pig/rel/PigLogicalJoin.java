@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2019-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -41,24 +41,23 @@ public class PigLogicalJoin {
    *             [outputRelation] = JOIN [leftInputRelation] BY [fields] [join type], [rightInputRelation] BY [fields];
    *             [outputRelation] = FOREACH [outputRelation] GENERATE [fields in leftInputRelation], [fields in rightInputRelation];
    */
-  public static String getScript(LogicalJoin logicalJoin, String outputRelation,
-      String leftInputRelation, String rightInputRelation) {
+  public static String getScript(LogicalJoin logicalJoin, String outputRelation, String leftInputRelation,
+      String rightInputRelation) {
 
     final List<String> leftInputFieldNames = PigRelUtils.getOutputFieldNames(logicalJoin.getLeft());
     final List<String> rightInputFieldNames = PigRelUtils.getOutputFieldNames(logicalJoin.getRight());
 
     final List<String> allInputFieldNames =
-        Stream.concat(leftInputFieldNames.stream(), rightInputFieldNames.stream())
-            .collect(Collectors.toList());
+        Stream.concat(leftInputFieldNames.stream(), rightInputFieldNames.stream()).collect(Collectors.toList());
 
-    final Pair<List<String>, List<String>> conditionFields = getConditionFields(
-        logicalJoin.getCondition(), allInputFieldNames);
+    final Pair<List<String>, List<String>> conditionFields =
+        getConditionFields(logicalJoin.getCondition(), allInputFieldNames);
 
-    final Pair<String, String> joinStatements = getJoinStatements(
-        logicalJoin, leftInputRelation, rightInputRelation, conditionFields);
+    final Pair<String, String> joinStatements =
+        getJoinStatements(logicalJoin, leftInputRelation, rightInputRelation, conditionFields);
 
-    final String joinStatement = String.format(
-        LOGICAL_JOIN_TEMPLATE, outputRelation, joinStatements.getLeft(), joinStatements.getRight());
+    final String joinStatement =
+        String.format(LOGICAL_JOIN_TEMPLATE, outputRelation, joinStatements.getLeft(), joinStatements.getRight());
 
     final List<String> outputFieldNames = PigRelUtils.getOutputFieldNames(logicalJoin);
     final String unwrapStatement = getForEachStatement(outputRelation, outputFieldNames, outputRelation,
@@ -89,8 +88,8 @@ public class PigLogicalJoin {
    */
   private static Pair<List<String>, List<String>> getConditionFields(RexNode rexNode, List<String> inputFieldNames) {
     if (!(rexNode instanceof RexCall)) {
-      throw new UnsupportedOperationException(String.format(
-          "Operator '%s' is not supported in a JOIN condition.", rexNode.getKind()));
+      throw new UnsupportedOperationException(
+          String.format("Operator '%s' is not supported in a JOIN condition.", rexNode.getKind()));
     }
     final RexCall rexCall = (RexCall) rexNode;
     final List<String> leftConditionFields = new ArrayList<>();
@@ -105,10 +104,10 @@ public class PigLogicalJoin {
         }
         break;
       case EQUALS:
-        leftConditionFields.add(
-            PigRexUtils.convertRexNodeToPigExpression(rexCall.getOperands().get(0), inputFieldNames));
-        rightConditionFields.add(
-            PigRexUtils.convertRexNodeToPigExpression(rexCall.getOperands().get(1), inputFieldNames));
+        leftConditionFields
+            .add(PigRexUtils.convertRexNodeToPigExpression(rexCall.getOperands().get(0), inputFieldNames));
+        rightConditionFields
+            .add(PigRexUtils.convertRexNodeToPigExpression(rexCall.getOperands().get(1), inputFieldNames));
         break;
       default:
         throw new UnsupportedRexCallException(String.format(
@@ -146,28 +145,24 @@ public class PigLogicalJoin {
   private static Pair<String, String> getJoinStatements(LogicalJoin logicalJoin, String leftInputRelation,
       String rightInputRelation, Pair<List<String>, List<String>> conditionFields) {
 
-    final String rightJoinStatement = String.format(
-        JOIN_BRANCH_TEMPLATE, rightInputRelation, String.join(", ", conditionFields.getRight()));
-    String leftJoinStatement = String.format(
-        JOIN_BRANCH_TEMPLATE, leftInputRelation, String.join(", ", conditionFields.getLeft()));
+    final String rightJoinStatement =
+        String.format(JOIN_BRANCH_TEMPLATE, rightInputRelation, String.join(", ", conditionFields.getRight()));
+    String leftJoinStatement =
+        String.format(JOIN_BRANCH_TEMPLATE, leftInputRelation, String.join(", ", conditionFields.getLeft()));
     switch (logicalJoin.getJoinType()) {
       case FULL:
-        leftJoinStatement =
-            String.join(" ", leftJoinStatement, "FULL OUTER");
+        leftJoinStatement = String.join(" ", leftJoinStatement, "FULL OUTER");
         break;
       case LEFT:
-        leftJoinStatement =
-            String.join(" ", leftJoinStatement, "LEFT OUTER");
+        leftJoinStatement = String.join(" ", leftJoinStatement, "LEFT OUTER");
         break;
       case RIGHT:
-        leftJoinStatement =
-            String.join(" ", leftJoinStatement, "RIGHT OUTER");
+        leftJoinStatement = String.join(" ", leftJoinStatement, "RIGHT OUTER");
         break;
       case INNER:
         break;
       default:
-        throw new UnsupportedRexCallException(String.format(
-            "JOIN type '%s' is not supported. Found in query: %s",
+        throw new UnsupportedRexCallException(String.format("JOIN type '%s' is not supported. Found in query: %s",
             logicalJoin.getJoinType().name(), logicalJoin.toString()));
     }
     return Pair.of(leftJoinStatement, rightJoinStatement);
@@ -205,30 +200,27 @@ public class PigLogicalJoin {
    *                             the right input of the join.
    * @return Pig Latin to unwrap the inputRelation with identifiers given by outputFieldNames into outputRelation.
    */
-  private static String getForEachStatement(String outputRelation, List<String> outputFieldNames,
-      String inputRelation,
-      String leftInputRelation, List<String> leftInputFieldNames,
-      String rightInputRelation, List<String> rightInputFieldNames) {
+  private static String getForEachStatement(String outputRelation, List<String> outputFieldNames, String inputRelation,
+      String leftInputRelation, List<String> leftInputFieldNames, String rightInputRelation,
+      List<String> rightInputFieldNames) {
 
     final List<String> unwrappedFields = new ArrayList<>();
 
     int inputFieldOffset = 0;
 
-    for (String leftInputField :  leftInputFieldNames) {
-      unwrappedFields.add(String.format(FULLY_QUALIFIED_FIELD_TEMPLATE,
-          leftInputRelation, leftInputField, outputFieldNames.get(inputFieldOffset)));
+    for (String leftInputField : leftInputFieldNames) {
+      unwrappedFields.add(String.format(FULLY_QUALIFIED_FIELD_TEMPLATE, leftInputRelation, leftInputField,
+          outputFieldNames.get(inputFieldOffset)));
       ++inputFieldOffset;
     }
 
-    for (String rightInputField :  rightInputFieldNames) {
-      unwrappedFields.add(String.format(FULLY_QUALIFIED_FIELD_TEMPLATE,
-          rightInputRelation, rightInputField, outputFieldNames.get(inputFieldOffset)));
+    for (String rightInputField : rightInputFieldNames) {
+      unwrappedFields.add(String.format(FULLY_QUALIFIED_FIELD_TEMPLATE, rightInputRelation, rightInputField,
+          outputFieldNames.get(inputFieldOffset)));
       ++inputFieldOffset;
     }
 
-    return String.format(
-        LOGICAL_PROJECT_TEMPLATE, outputRelation, inputRelation, String.join(", ", unwrappedFields));
+    return String.format(LOGICAL_PROJECT_TEMPLATE, outputRelation, inputRelation, String.join(", ", unwrappedFields));
   }
-
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2017-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -26,8 +26,8 @@ public class UDFMapUtils {
    * @param numOperands Number of operands
    * @param prestoUDFName Name of Presto UDF
    */
-  static void createUDFMapEntry(Map<String, UDFTransformer> udfMap, SqlOperator calciteOp,
-      int numOperands, String prestoUDFName) {
+  static void createUDFMapEntry(Map<String, UDFTransformer> udfMap, SqlOperator calciteOp, int numOperands,
+      String prestoUDFName) {
     createUDFMapEntry(udfMap, calciteOp, numOperands, prestoUDFName, null, null);
   }
 
@@ -45,8 +45,7 @@ public class UDFMapUtils {
       SqlOperator prestoSqlOperator, String operandTransformer, String resultTransformer) {
 
     udfMap.put(getKey(calciteOp.getName(), numOperands),
-        UDFTransformer.of(calciteOp.getName(), prestoSqlOperator, operandTransformer, resultTransformer,
-            null));
+        UDFTransformer.of(calciteOp.getName(), prestoSqlOperator, operandTransformer, resultTransformer, null));
   }
 
   /**
@@ -76,14 +75,8 @@ public class UDFMapUtils {
    */
   static void createUDFMapEntry(Map<String, UDFTransformer> udfMap, SqlOperator calciteOp, int numOperands,
       String prestoUDFName, String operandTransformer, String resultTransformer) {
-    createUDFMapEntry(
-        udfMap,
-        calciteOp,
-        numOperands,
-        createUDF(prestoUDFName, calciteOp.getReturnTypeInference()),
-        operandTransformer,
-        resultTransformer
-    );
+    createUDFMapEntry(udfMap, calciteOp, numOperands, createUDF(prestoUDFName, calciteOp.getReturnTypeInference()),
+        operandTransformer, resultTransformer);
   }
 
   /**
@@ -99,14 +92,8 @@ public class UDFMapUtils {
    */
   static void createRuntimeUDFMapEntry(Map<String, UDFTransformer> udfMap, SqlOperator calciteOp, int numOperands,
       String operatorTransformers, String operandTransformer, String resultTransformer) {
-    createUDFMapEntry(
-        udfMap,
-        calciteOp,
-        numOperands,
-        createUDF("", calciteOp.getReturnTypeInference()),
-        operandTransformer,
-        resultTransformer
-    );
+    createUDFMapEntry(udfMap, calciteOp, numOperands, createUDF("", calciteOp.getReturnTypeInference()),
+        operandTransformer, resultTransformer);
   }
 
   /**
@@ -117,8 +104,8 @@ public class UDFMapUtils {
    * @return SQL operator
    */
   public static SqlOperator createUDF(String udfName, SqlReturnTypeInference typeInference) {
-    return new SqlUserDefinedFunction(new SqlIdentifier(ImmutableList.of(udfName), SqlParserPos.ZERO),
-        typeInference, null, null, null, null);
+    return new SqlUserDefinedFunction(new SqlIdentifier(ImmutableList.of(udfName), SqlParserPos.ZERO), typeInference,
+        null, null, null, null);
   }
 
   static String getKey(String calciteOpName, int numOperands) {

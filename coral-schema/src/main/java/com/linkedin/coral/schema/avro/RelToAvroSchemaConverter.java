@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2019-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -55,7 +55,6 @@ import org.apache.calcite.util.Pair;
 import org.apache.hadoop.hive.metastore.api.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 
 /**
@@ -154,9 +153,8 @@ public class RelToAvroSchemaConverter {
 
     private final HiveMetastoreClient hiveMetastoreClient;
 
-    public SchemaRelShuttle(HiveMetastoreClient hiveMetastoreClient,
-                            Map<RelNode, Schema> schemaMap,
-                            boolean strictMode) {
+    public SchemaRelShuttle(HiveMetastoreClient hiveMetastoreClient, Map<RelNode, Schema> schemaMap,
+        boolean strictMode) {
       this.hiveMetastoreClient = hiveMetastoreClient;
       this.schemaMap = schemaMap;
       this.strictMode = strictMode;
@@ -202,9 +200,8 @@ public class RelToAvroSchemaConverter {
         suggestedFieldNames.offer(field.getName());
       }
 
-      SchemaBuilder.FieldAssembler<Schema> logicalProjectFieldAssembler = SchemaBuilder.record(inputSchema.getName())
-                                                                         .namespace(inputSchema.getNamespace())
-                                                                         .fields();
+      SchemaBuilder.FieldAssembler<Schema> logicalProjectFieldAssembler =
+          SchemaBuilder.record(inputSchema.getName()).namespace(inputSchema.getNamespace()).fields();
       logicalProject.accept(new SchemaRexShuttle(inputSchema, suggestedFieldNames, logicalProjectFieldAssembler));
 
       schemaMap.put(logicalProject, logicalProjectFieldAssembler.endRecord());
@@ -222,12 +219,11 @@ public class RelToAvroSchemaConverter {
       List<Schema.Field> leftInputSchemaFields = leftInputSchema.getFields();
       List<Schema.Field> rightInputSchemaFields = rightInputSchema.getFields();
 
-      SchemaBuilder.FieldAssembler<Schema> logicalJoinFieldAssembler = SchemaBuilder.record(leftInputSchema.getName())
-          .namespace(leftInputSchema.getNamespace())
-          .fields();
+      SchemaBuilder.FieldAssembler<Schema> logicalJoinFieldAssembler =
+          SchemaBuilder.record(leftInputSchema.getName()).namespace(leftInputSchema.getNamespace()).fields();
 
       for (int i = 0; i < leftInputSchemaFields.size(); i++) {
-          SchemaUtilities.appendField(leftInputSchemaFields.get(i), logicalJoinFieldAssembler);
+        SchemaUtilities.appendField(leftInputSchemaFields.get(i), logicalJoinFieldAssembler);
       }
       for (int i = 0; i < rightInputSchemaFields.size(); i++) {
         SchemaUtilities.appendField(rightInputSchemaFields.get(i), logicalJoinFieldAssembler);
@@ -280,9 +276,8 @@ public class RelToAvroSchemaConverter {
       // TODO: Potential need RexShuttle
       RelNode relNode = super.visit(logicalAggregate);
       Schema inputSchema = schemaMap.get(logicalAggregate.getInput());
-      SchemaBuilder.FieldAssembler<Schema> logicalAggregateFieldAssembler = SchemaBuilder.record(inputSchema.getName())
-          .namespace(inputSchema.getNamespace())
-          .fields();
+      SchemaBuilder.FieldAssembler<Schema> logicalAggregateFieldAssembler =
+          SchemaBuilder.record(inputSchema.getName()).namespace(inputSchema.getNamespace()).fields();
 
       List<Schema.Field> inputSchemaFields = inputSchema.getFields();
       for (int i = 0; i < inputSchemaFields.size(); i++) {
@@ -325,9 +320,8 @@ public class RelToAvroSchemaConverter {
     public RelNode visit(RelNode relNode) {
       // Handles lateral views here
       if (relNode instanceof HiveUncollect) {
-        SchemaBuilder.FieldAssembler<Schema> hiveUncollectFieldAssembler = SchemaBuilder.record("LateralViews")
-            .namespace("LateralViews")
-            .fields();
+        SchemaBuilder.FieldAssembler<Schema> hiveUncollectFieldAssembler =
+            SchemaBuilder.record("LateralViews").namespace("LateralViews").fields();
 
         for (RelDataTypeField field : relNode.getRowType().getFieldList()) {
           SchemaUtilities.appendField(field.getName(), field.getType(), hiveUncollectFieldAssembler, true);
@@ -372,8 +366,7 @@ public class RelToAvroSchemaConverter {
     private Queue<String> suggestedFieldNames;
     private SchemaBuilder.FieldAssembler<Schema> fieldAssembler;
 
-    public SchemaRexShuttle(Schema inputSchema,
-        Queue<String> suggestedFieldNames,
+    public SchemaRexShuttle(Schema inputSchema, Queue<String> suggestedFieldNames,
         SchemaBuilder.FieldAssembler<Schema> fieldAssembler) {
       this.inputSchema = inputSchema;
       this.suggestedFieldNames = suggestedFieldNames;
@@ -411,8 +404,7 @@ public class RelToAvroSchemaConverter {
 
     @Override
     public RexNode visitCall(RexCall rexCall) {
-      if (rexCall.getOperator() instanceof SqlUserDefinedFunction
-      || rexCall.getOperator() instanceof SqlOperator) {
+      if (rexCall.getOperator() instanceof SqlUserDefinedFunction || rexCall.getOperator() instanceof SqlOperator) {
         /**
          * For SqlUserDefinedFunction and SqlOperator RexCall, no need to handle it recursively
          * and only return type of udf or sql operator is relevant

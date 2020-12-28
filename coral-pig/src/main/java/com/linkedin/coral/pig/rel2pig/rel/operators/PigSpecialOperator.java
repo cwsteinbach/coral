@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2019-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -83,8 +83,7 @@ public class PigSpecialOperator extends PigOperator {
    */
   private String convertMapOperatorCall() {
     final String key = PigRexUtils.convertRexNodeToPigExpression(rexCall.getOperands().get(1), inputFieldNames);
-    final String map = PigRexUtils.convertRexNodeToPigExpression(
-        rexCall.getOperands().get(0), inputFieldNames);
+    final String map = PigRexUtils.convertRexNodeToPigExpression(rexCall.getOperands().get(0), inputFieldNames);
 
     return String.format("%s#%s", map, key);
   }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2018-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -26,6 +26,8 @@ import org.apache.calcite.sql2rel.ReflectiveConvertletTable;
 import org.apache.calcite.sql2rel.SqlRexContext;
 import org.apache.calcite.sql2rel.SqlRexConvertlet;
 import org.apache.calcite.sql2rel.StandardConvertletTable;
+
+
 /**
  * ConvertletTable for Hive Operators
  * @see ReflectiveConvertletTable documentation for method naming and visibility rules
@@ -49,7 +51,7 @@ public class HiveConvertletTable extends ReflectiveConvertletTable {
     Preconditions.checkState(operandList.size() == 2 && operandList.get(1) instanceof SqlNodeList);
     RexNode lhs = cx.convertExpression(operandList.get(0));
     SqlNodeList rhsNodes = (SqlNodeList) operandList.get(1);
-    ImmutableList.Builder<RexNode> rexNodes = ImmutableList.<RexNode>builder().add(lhs);
+    ImmutableList.Builder<RexNode> rexNodes = ImmutableList.<RexNode> builder().add(lhs);
     for (int i = 0; i < rhsNodes.size(); i++) {
       rexNodes.add(cx.convertExpression(rhsNodes.get(i)));
     }

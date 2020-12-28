@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2017-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -55,12 +55,10 @@ public class CalcitePrestoUDFMap {
     createUDFMapEntry(UDF_MAP, hiveToCalciteOp("unhex"), 1, "from_hex");
     createUDFMapEntry(UDF_MAP, hiveToCalciteOp("array_contains"), 2, "contains");
     createUDFMapEntry(UDF_MAP, hiveToCalciteOp("regexp_extract"), 3, "regexp_extract",
-       "[{\"input\": 1}, {\"op\": \"hive_pattern_to_presto\", \"operands\":[{\"input\": 2}]}, {\"input\": 3}]",
-        null);
+        "[{\"input\": 1}, {\"op\": \"hive_pattern_to_presto\", \"operands\":[{\"input\": 2}]}, {\"input\": 3}]", null);
     createUDFMapEntry(UDF_MAP, hiveToCalciteOp("instr"), 2, "strpos");
     createRuntimeUDFMapEntry(UDF_MAP, hiveToCalciteOp("decode"), 2,
-        "[{\"regex\":\"(?i)('utf-8')\", \"input\":2, \"name\":\"from_utf8\"}]",
-        "[{\"input\":1}]", null);
+        "[{\"regex\":\"(?i)('utf-8')\", \"input\":2, \"name\":\"from_utf8\"}]", "[{\"input\":1}]", null);
 
     // FIXME: this is incorrect. Adding this to test correctness of the overall system
     createUDFMapEntry(UDF_MAP, hiveToCalciteOp("concat_ws"), 3, "concat_ws");
@@ -74,14 +72,12 @@ public class CalcitePrestoUDFMap {
     // While this convention fits most UDFs it doesn't fit all. With the following mapping we override the conventional
     // UDF name mapping behavior to a hardcoded one.
     // For example instead of UserAgentParser getting mapped to user_agent_parser, we mapped it here to useragentparser
-    createUDFMapEntry(UDF_MAP, daliToCalciteOp("com.linkedin.dali.udf.watbotcrawlerlookup.hive.WATBotCrawlerLookup"),
-        3, "wat_bot_crawler_lookup");
-    createUDFMapEntry(UDF_MAP, daliToCalciteOp("com.linkedin.stdudfs.parsing.hive.Ip2Str"),
-        1, "ip2str");
-    createUDFMapEntry(UDF_MAP, daliToCalciteOp("com.linkedin.stdudfs.parsing.hive.Ip2Str"),
-        3, "ip2str");
-    createUDFMapEntry(UDF_MAP, daliToCalciteOp("com.linkedin.stdudfs.parsing.hive.UserAgentParser"),
-        2, "useragentparser");
+    createUDFMapEntry(UDF_MAP, daliToCalciteOp("com.linkedin.dali.udf.watbotcrawlerlookup.hive.WATBotCrawlerLookup"), 3,
+        "wat_bot_crawler_lookup");
+    createUDFMapEntry(UDF_MAP, daliToCalciteOp("com.linkedin.stdudfs.parsing.hive.Ip2Str"), 1, "ip2str");
+    createUDFMapEntry(UDF_MAP, daliToCalciteOp("com.linkedin.stdudfs.parsing.hive.Ip2Str"), 3, "ip2str");
+    createUDFMapEntry(UDF_MAP, daliToCalciteOp("com.linkedin.stdudfs.parsing.hive.UserAgentParser"), 2,
+        "useragentparser");
     addDaliUDFs();
   }
 

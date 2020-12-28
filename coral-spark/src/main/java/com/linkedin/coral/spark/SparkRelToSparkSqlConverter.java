@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2018-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -27,6 +27,7 @@ import org.apache.calcite.sql.SqlNode;
 import org.apache.calcite.sql.fun.SqlMultisetValueConstructor;
 import org.apache.calcite.sql.parser.SqlParserPos;
 
+
 /**
  * This class converts Spark RelNode to Spark SQL
  * and is used by CoralSpark's constructSparkSQL() method.
@@ -52,7 +53,6 @@ public class SparkRelToSparkSqlConverter extends RelToSqlConverter {
     super(SparkSqlDialect.INSTANCE);
   }
 
-
   /**
    * This overridden function makes sure that the basetable names in the output SQL
    * will be in the form of "dbname.tablename" instead of "catalogname.dbname.tablename"
@@ -68,8 +68,7 @@ public class SparkRelToSparkSqlConverter extends RelToSqlConverter {
   public Result visit(TableScan e) {
     checkQualifiedName(e.getTable().getQualifiedName());
     List<String> tableNameWithoutCatalog = e.getTable().getQualifiedName().subList(1, 3);
-    final SqlIdentifier identifier =
-        new SqlIdentifier(tableNameWithoutCatalog, SqlParserPos.ZERO);
+    final SqlIdentifier identifier = new SqlIdentifier(tableNameWithoutCatalog, SqlParserPos.ZERO);
     return result(identifier, ImmutableList.of(Clause.FROM), e, null);
   }
 
@@ -91,21 +90,16 @@ public class SparkRelToSparkSqlConverter extends RelToSqlConverter {
     // Add context specifying correlationId has same context as its left child
     correlTableMap.put(e.getCorrelationId(), leftResult.qualifiedContext());
     final Result rightResult = visitChild(1, e.getRight());
-    final List<SqlNode> asOperands = createAsFullOperands(e.getRight().getRowType(), rightResult.node, rightResult.neededAlias);
+    final List<SqlNode> asOperands =
+        createAsFullOperands(e.getRight().getRowType(), rightResult.node, rightResult.neededAlias);
 
     // Same as AS operator but instead of "AS TableRef(ColRef1, ColRef2)" produces "TableRef AS ColRef1, ColRef2"
     SqlNode rightLateral = SqlLateralViewAsOperator.instance.createCall(POS, asOperands);
 
     // A new type of join is used, because the unparsing of this join is different from already existing join
     SqlLateralJoin join =
-        new SqlLateralJoin(POS,
-            leftResult.asFrom(),
-            SqlLiteral.createBoolean(false, POS),
-            JoinType.COMMA.symbol(POS),
-            rightLateral,
-            JoinConditionType.NONE.symbol(POS),
-            null,
-            isCorrelateRightChildOuter(rightResult.node));
+        new SqlLateralJoin(POS, leftResult.asFrom(), SqlLiteral.createBoolean(false, POS), JoinType.COMMA.symbol(POS),
+            rightLateral, JoinConditionType.NONE.symbol(POS), null, isCorrelateRightChildOuter(rightResult.node));
     return result(join, leftResult, rightResult);
   }
 
@@ -135,12 +129,10 @@ public class SparkRelToSparkSqlConverter extends RelToSqlConverter {
     }
 
     // Convert UNNEST to EXPLODE function
-    final SqlNode unnestNode = HiveExplodeOperator.EXPLODE.createCall(POS,
-        unnestOperands.toArray(new SqlNode[0]));
+    final SqlNode unnestNode = HiveExplodeOperator.EXPLODE.createCall(POS, unnestOperands.toArray(new SqlNode[0]));
 
     return result(unnestNode, ImmutableList.of(Clause.FROM), e, null);
   }
-
 
   /**
    * Calcite's RelNode doesn't support 'OUTER' lateral views, Source: https://calcite.apache.org/docs/reference.html
@@ -165,7 +157,8 @@ public class SparkRelToSparkSqlConverter extends RelToSqlConverter {
         SqlBasicCall ifNode = (SqlBasicCall) operandList.get(0);
         if (ifNode.getOperator().getName().equals("if") && ifNode.operandCount() == 3) {
           SqlBasicCall arrayNode = (SqlBasicCall) ifNode.getOperandList().get(2);
-          if (arrayNode.getOperator() instanceof SqlMultisetValueConstructor && arrayNode.getOperandList().get(0) instanceof SqlLiteral) {
+          if (arrayNode.getOperator() instanceof SqlMultisetValueConstructor
+              && arrayNode.getOperandList().get(0) instanceof SqlLiteral) {
             SqlLiteral sqlLiteral = (SqlLiteral) arrayNode.getOperandList().get(0);
             return sqlLiteral.getTypeName().toString().equals("NULL");
           }

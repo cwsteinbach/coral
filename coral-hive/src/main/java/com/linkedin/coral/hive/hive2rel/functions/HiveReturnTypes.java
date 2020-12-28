@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2018-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -44,8 +44,7 @@ public class HiveReturnTypes {
     public RelDataType inferReturnType(SqlOperatorBinding opBinding) {
       RelDataTypeFactory typeFactory = opBinding.getTypeFactory();
       RelDataType strType = typeFactory.createSqlType(SqlTypeName.VARCHAR);
-      return typeFactory.createArrayType(
-          typeFactory.createMapType(strType, strType), -1);
+      return typeFactory.createArrayType(typeFactory.createMapType(strType, strType), -1);
     }
   };
 
@@ -53,8 +52,7 @@ public class HiveReturnTypes {
     return new SqlReturnTypeInference() {
       @Override
       public RelDataType inferReturnType(SqlOperatorBinding opBinding) {
-        return opBinding.getTypeFactory().createArrayType(
-            opBinding.getTypeFactory().createSqlType(typeName), -1);
+        return opBinding.getTypeFactory().createArrayType(opBinding.getTypeFactory().createSqlType(typeName), -1);
       }
     };
   }
@@ -64,10 +62,7 @@ public class HiveReturnTypes {
       @Override
       public RelDataType inferReturnType(SqlOperatorBinding opBinding) {
         RelDataTypeFactory typeFactory = opBinding.getTypeFactory();
-        return typeFactory.createMapType(
-            typeFactory.createSqlType(keyType),
-            typeFactory.createSqlType(valueType)
-        );
+        return typeFactory.createMapType(typeFactory.createSqlType(keyType), typeFactory.createSqlType(valueType));
       }
     };
   }
@@ -77,9 +72,7 @@ public class HiveReturnTypes {
       @Override
       public RelDataType inferReturnType(SqlOperatorBinding opBinding) {
         RelDataTypeFactory typeFactory = opBinding.getTypeFactory();
-        List<RelDataType> relTypes = types.stream()
-            .map(typeFactory::createSqlType)
-            .collect(Collectors.toList());
+        List<RelDataType> relTypes = types.stream().map(typeFactory::createSqlType).collect(Collectors.toList());
         return typeFactory.createStructType(relTypes, fieldNames);
       }
     };
@@ -102,9 +95,7 @@ public class HiveReturnTypes {
       @Override
       public RelDataType inferReturnType(SqlOperatorBinding opBinding) {
         RelDataTypeFactory typeFactory = opBinding.getTypeFactory();
-        List<RelDataType> relTypes = types.stream()
-            .map(t -> t.inferReturnType(opBinding))
-            .collect(Collectors.toList());
+        List<RelDataType> relTypes = types.stream().map(t -> t.inferReturnType(opBinding)).collect(Collectors.toList());
         return typeFactory.createStructType(relTypes, fieldNames);
       }
     };

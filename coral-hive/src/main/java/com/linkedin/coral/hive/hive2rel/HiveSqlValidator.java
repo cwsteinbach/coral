@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2017-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -22,8 +22,7 @@ import org.apache.calcite.sql.validate.SqlValidatorScope;
 
 class HiveSqlValidator extends SqlValidatorImpl {
 
-  public HiveSqlValidator(SqlOperatorTable opTab,
-      CalciteCatalogReader catalogReader, JavaTypeFactory typeFactory,
+  public HiveSqlValidator(SqlOperatorTable opTab, CalciteCatalogReader catalogReader, JavaTypeFactory typeFactory,
       SqlConformance conformance) {
     super(opTab, catalogReader, typeFactory, conformance);
   }
@@ -41,8 +40,7 @@ class HiveSqlValidator extends SqlValidatorImpl {
   }
 
   @Override
-  protected void inferUnknownTypes(RelDataType inferredType,
-      SqlValidatorScope scope, SqlNode node) {
+  protected void inferUnknownTypes(RelDataType inferredType, SqlValidatorScope scope, SqlNode node) {
     if (SqlUtil.isNullLiteral(node, false)) {
       setValidatedNodeType(node, typeFactory.createSqlType(SqlTypeName.NULL));
       return;
@@ -52,7 +50,8 @@ class HiveSqlValidator extends SqlValidatorImpl {
 
   @Override
   public SqlNode expand(SqlNode expr, SqlValidatorScope scope) {
-    if (expr instanceof SqlBasicCall && ((SqlBasicCall) expr).getOperator().equals(FunctionFieldReferenceOperator.DOT)) {
+    if (expr instanceof SqlBasicCall
+        && ((SqlBasicCall) expr).getOperator().equals(FunctionFieldReferenceOperator.DOT)) {
       SqlBasicCall dotCall = (SqlBasicCall) expr;
       if (dotCall.operand(0) instanceof SqlBasicCall) {
         return expr;

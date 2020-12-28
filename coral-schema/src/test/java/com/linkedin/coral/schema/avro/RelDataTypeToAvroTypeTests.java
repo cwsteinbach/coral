@@ -29,11 +29,10 @@ public class RelDataTypeToAvroTypeTests {
 
     TestUtils.executeCreateViewQuery("default", "v", viewSql);
     RelNode relNode = hiveToRelConverter.convertView("default", "v");
-    Schema actualAvroType = RelDataTypeToAvroType.relDataTypeToAvroTypeNonNullable(relNode.getRowType(), "nestedRecord");
+    Schema actualAvroType =
+        RelDataTypeToAvroType.relDataTypeToAvroTypeNonNullable(relNode.getRowType(), "nestedRecord");
 
-    Assert.assertEquals(actualAvroType.toString(true),
-        TestUtils.loadSchema("rel2avro-testNestedRecord-expected.avsc"));
+    Assert.assertEquals(actualAvroType.toString(true), TestUtils.loadSchema("rel2avro-testNestedRecord-expected.avsc"));
   }
-
 
 }

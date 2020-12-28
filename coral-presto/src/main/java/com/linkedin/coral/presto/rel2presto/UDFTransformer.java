@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2017-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -120,13 +120,9 @@ public class UDFTransformer {
     OP_MAP.put("*", SqlStdOperatorTable.MULTIPLY);
     OP_MAP.put("/", SqlStdOperatorTable.DIVIDE);
     OP_MAP.put("^", SqlStdOperatorTable.POWER);
-    OP_MAP.put("hive_pattern_to_presto", new SqlUserDefinedFunction(
-        new SqlIdentifier("hive_pattern_to_presto", SqlParserPos.ZERO),
-        HiveReturnTypes.STRING,
-        null,
-        OperandTypes.STRING,
-        null,
-        null));
+    OP_MAP.put("hive_pattern_to_presto",
+        new SqlUserDefinedFunction(new SqlIdentifier("hive_pattern_to_presto", SqlParserPos.ZERO),
+            HiveReturnTypes.STRING, null, OperandTypes.STRING, null, null));
   }
 
   public static final String OPERATOR = "op";
@@ -197,8 +193,7 @@ public class UDFTransformer {
    */
 
   public static UDFTransformer of(@Nonnull String calciteOperatorName, @Nonnull SqlOperator targetOperator,
-      @Nullable String operandTransformers, @Nullable String resultTransformer,
-      @Nullable String operatorTransformers) {
+      @Nullable String operandTransformers, @Nullable String resultTransformer, @Nullable String operatorTransformers) {
     List<JsonObject> operands = null;
     JsonObject result = null;
     List<JsonObject> operators = null;
@@ -224,12 +219,9 @@ public class UDFTransformer {
   public RexNode transformCall(RexBuilder rexBuilder, List<RexNode> sourceOperands) {
     final SqlOperator newTargetOperator = transformTargetOperator(targetOperator, sourceOperands);
     if (newTargetOperator == null || newTargetOperator.getName().isEmpty()) {
-      String operands = sourceOperands.stream()
-          .map(i -> i.toString())
-          .collect(Collectors.joining(","));
+      String operands = sourceOperands.stream().map(i -> i.toString()).collect(Collectors.joining(","));
       throw new IllegalArgumentException(String.format(
-          "An equivalent Presto operator was not found for the function call: %s(%s)",
-          calciteOperatorName, operands));
+          "An equivalent Presto operator was not found for the function call: %s(%s)", calciteOperatorName, operands));
     }
     final List<RexNode> newOperands = transformOperands(rexBuilder, sourceOperands);
     final RexNode newCall = rexBuilder.makeCall(newTargetOperator, newOperands);
@@ -268,7 +260,7 @@ public class UDFTransformer {
   private RexNode transformExpression(RexBuilder rexBuilder, JsonObject transformer, List<RexNode> sourceOperands) {
     if (transformer.get(OPERATOR) != null) {
       final List<RexNode> inputOperands = new ArrayList<>();
-      for (JsonElement inputOperand: transformer.getAsJsonArray(OPERANDS)) {
+      for (JsonElement inputOperand : transformer.getAsJsonArray(OPERANDS)) {
         if (inputOperand.isJsonObject()) {
           inputOperands.add(transformExpression(rexBuilder, inputOperand.getAsJsonObject(), sourceOperands));
         }
@@ -283,8 +275,8 @@ public class UDFTransformer {
     if (transformer.get(INPUT) != null) {
       int index = transformer.get(INPUT).getAsInt();
       if (index < 0 || index >= sourceOperands.size() || sourceOperands.get(index) == null) {
-        throw new IllegalArgumentException("Invalid input value: " + index
-            + ". Number of source operands: " + sourceOperands.size());
+        throw new IllegalArgumentException(
+            "Invalid input value: " + index + ". Number of source operands: " + sourceOperands.size());
       }
       return sourceOperands.get(index);
     }
@@ -319,10 +311,9 @@ public class UDFTransformer {
     }
 
     for (JsonObject operatorTransformer : operatorTransformers) {
-      if (!operatorTransformer.has(REGEX)
-          || !operatorTransformer.has(INPUT)
-          || !operatorTransformer.has(NAME)) {
-        throw new IllegalArgumentException("JSON node for target operator transformer must have a matcher, input and name");
+      if (!operatorTransformer.has(REGEX) || !operatorTransformer.has(INPUT) || !operatorTransformer.has(NAME)) {
+        throw new IllegalArgumentException(
+            "JSON node for target operator transformer must have a matcher, input and name");
       }
       // We use the same convention as operand and result transformers.
       // Therefore, we start source index values at index 1 instead of index 0.

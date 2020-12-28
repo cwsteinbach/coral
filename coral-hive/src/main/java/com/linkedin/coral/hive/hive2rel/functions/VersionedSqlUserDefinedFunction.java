@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2019-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -35,46 +35,27 @@ public class VersionedSqlUserDefinedFunction extends SqlUserDefinedFunction {
   // where functionName is defined in the "functions" property of the view.
   private String viewDependentFunctionName;
 
-  private VersionedSqlUserDefinedFunction(SqlIdentifier opName,
-      SqlReturnTypeInference returnTypeInference,
-      SqlOperandTypeInference operandTypeInference,
-      SqlOperandTypeChecker operandTypeChecker,
-      List<RelDataType> paramTypes,
-      Function function,
-      List<String> ivyDependencies,
-      String viewDependentFunctionName) {
-    super(opName, returnTypeInference, operandTypeInference, operandTypeChecker, paramTypes,
-        function,
+  private VersionedSqlUserDefinedFunction(SqlIdentifier opName, SqlReturnTypeInference returnTypeInference,
+      SqlOperandTypeInference operandTypeInference, SqlOperandTypeChecker operandTypeChecker,
+      List<RelDataType> paramTypes, Function function, List<String> ivyDependencies, String viewDependentFunctionName) {
+    super(opName, returnTypeInference, operandTypeInference, operandTypeChecker, paramTypes, function,
         SqlFunctionCategory.USER_DEFINED_FUNCTION);
     this.ivyDependencies = ivyDependencies;
     this.viewDependentFunctionName = viewDependentFunctionName;
   }
 
-  public VersionedSqlUserDefinedFunction(String name,
-      SqlReturnTypeInference returnTypeInference,
-      SqlOperandTypeChecker operandTypeChecker,
-      List<RelDataType> paramTypes,
-      Function function,
-      List<String> ivyDependencies,
-      String viewDependentFunctionName) {
-    this(new SqlIdentifier(ImmutableList.of(name), SqlParserPos.ZERO),
-        returnTypeInference,
-        null,
-        operandTypeChecker,
-        paramTypes,
-        function, ivyDependencies, viewDependentFunctionName);
+  public VersionedSqlUserDefinedFunction(String name, SqlReturnTypeInference returnTypeInference,
+      SqlOperandTypeChecker operandTypeChecker, List<RelDataType> paramTypes, Function function,
+      List<String> ivyDependencies, String viewDependentFunctionName) {
+    this(new SqlIdentifier(ImmutableList.of(name), SqlParserPos.ZERO), returnTypeInference, null, operandTypeChecker,
+        paramTypes, function, ivyDependencies, viewDependentFunctionName);
   }
 
-  public VersionedSqlUserDefinedFunction(
-      SqlUserDefinedFunction sqlUdf,
-      List<String> ivyDependencies,
+  public VersionedSqlUserDefinedFunction(SqlUserDefinedFunction sqlUdf, List<String> ivyDependencies,
       String viewDependentFunctionName) {
-    this(new SqlIdentifier(ImmutableList.of(sqlUdf.getName()), SqlParserPos.ZERO),
-        sqlUdf.getReturnTypeInference(),
-        null,
-        sqlUdf.getOperandTypeChecker(),
-        sqlUdf.getParamTypes(),
-        sqlUdf.getFunction(), ivyDependencies, viewDependentFunctionName);
+    this(new SqlIdentifier(ImmutableList.of(sqlUdf.getName()), SqlParserPos.ZERO), sqlUdf.getReturnTypeInference(),
+        null, sqlUdf.getOperandTypeChecker(), sqlUdf.getParamTypes(), sqlUdf.getFunction(), ivyDependencies,
+        viewDependentFunctionName);
   }
 
   public List<String> getIvyDependencies() {
@@ -93,13 +74,8 @@ public class VersionedSqlUserDefinedFunction extends SqlUserDefinedFunction {
   @Override
   public RelDataType deriveType(SqlValidator validator, SqlValidatorScope scope, SqlCall call) {
     RelDataType relDataType = super.deriveType(validator, scope, call);
-    ((SqlBasicCall) call).setOperator(
-        new VersionedSqlUserDefinedFunction(
-            (SqlUserDefinedFunction) (call.getOperator()),
-            ivyDependencies,
-            viewDependentFunctionName
-        )
-    );
-    return  relDataType;
+    ((SqlBasicCall) call).setOperator(new VersionedSqlUserDefinedFunction((SqlUserDefinedFunction) (call.getOperator()),
+        ivyDependencies, viewDependentFunctionName));
+    return relDataType;
   }
 }

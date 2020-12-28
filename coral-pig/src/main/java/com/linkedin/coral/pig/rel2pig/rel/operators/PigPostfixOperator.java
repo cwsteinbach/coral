@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2019-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -25,8 +25,7 @@ public class PigPostfixOperator extends PigOperator {
 
   @Override
   public String unparse() {
-    final String inputField = PigRexUtils.convertRexNodeToPigExpression(
-        rexCall.getOperands().get(0), inputFieldNames);
+    final String inputField = PigRexUtils.convertRexNodeToPigExpression(rexCall.getOperands().get(0), inputFieldNames);
     switch (rexCall.getOperator().getKind()) {
       case IS_NULL:
       case IS_NOT_NULL:

@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2019-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -46,8 +46,7 @@ public class PigLogicalAggregate {
     }
 
     final String groupBy = getGroupByStatement(logicalAggregate, outputRelation, inputRelation);
-    final String aggregate = getForEachStatement(
-        logicalAggregate, outputRelation, inputRelation, inputRelation);
+    final String aggregate = getForEachStatement(logicalAggregate, outputRelation, inputRelation, inputRelation);
 
     return String.join("\n", groupBy, aggregate);
   }
@@ -78,9 +77,7 @@ public class PigLogicalAggregate {
 
     final List<String> inputFieldNames = PigRelUtils.getOutputFieldNames(logicalAggregate.getInput());
 
-    final String groupByFieldNames = groupSet.stream()
-        .map(inputFieldNames::get)
-        .collect(Collectors.joining(", "));
+    final String groupByFieldNames = groupSet.stream().map(inputFieldNames::get).collect(Collectors.joining(", "));
 
     return String.format(GROUP_BY_TEMPLATE, outputRelation, inputRelation, groupByFieldNames);
   }
@@ -105,8 +102,8 @@ public class PigLogicalAggregate {
     final List<String> outputFieldNames = PigRelUtils.getOutputFieldNames(logicalAggregate);
     final List<String> inputFieldNames = PigRelUtils.getOutputFieldNames(logicalAggregate.getInput());
 
-    String aggregateProjection = getAggregateFunctionCalls(
-        logicalAggregate, outputFieldNames, inputFieldNames, bagIdentifier);
+    String aggregateProjection =
+        getAggregateFunctionCalls(logicalAggregate, outputFieldNames, inputFieldNames, bagIdentifier);
 
     final List<Integer> groupSet = logicalAggregate.getGroupSet().toList();
     if (!groupSet.isEmpty()) {
@@ -143,8 +140,7 @@ public class PigLogicalAggregate {
 
     return groupSet.stream()
         .map(groupByFieldIndex -> String.format(FIELD_TEMPLATE,
-            String.format("group.%s", inputFieldNames.get(groupByFieldIndex)),
-            outputFieldNames.get(groupByFieldIndex)))
+            String.format("group.%s", inputFieldNames.get(groupByFieldIndex)), outputFieldNames.get(groupByFieldIndex)))
         .collect(Collectors.joining(", "));
   }
 
@@ -184,15 +180,12 @@ public class PigLogicalAggregate {
       }
 
       // TODO(ralam): LIHADOOP-49630 - Create a function mapping from Hive/Transport/Built-in functions to Pig
-      aggregateStatements.add(String.format(
-          AGGREGATE_CALL_TEMPLATE,
-          aggregateCall.getAggregation().getName().toUpperCase(),
-          aggregateCallArguments,
-          outputFieldNames.get(groupBySetOffset + i)));
+      aggregateStatements
+          .add(String.format(AGGREGATE_CALL_TEMPLATE, aggregateCall.getAggregation().getName().toUpperCase(),
+              aggregateCallArguments, outputFieldNames.get(groupBySetOffset + i)));
     }
 
     return String.join(", ", aggregateStatements);
   }
 
 }
-

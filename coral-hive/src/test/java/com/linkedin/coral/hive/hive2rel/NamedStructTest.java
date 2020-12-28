@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 LinkedIn Corporation. All rights reserved.
+ * Copyright 2018-2020 LinkedIn Corporation. All rights reserved.
  * Licensed under the BSD-2 Clause license.
  * See LICENSE in the project root for license information.
  */
@@ -39,8 +39,9 @@ public class NamedStructTest {
   public void testNullFieldValue() {
     final String sql = "SELECT named_struct('abc', cast(NULL as int), 'def', 150)";
     final String generated = sqlToRelStr(sql);
-    final String expected = "LogicalProject(EXPR$0=[CAST(ROW(CAST(null:NULL):INTEGER, 150)):RecordType(INTEGER abc, INTEGER NOT NULL def) NOT NULL])\n" +
-        "  LogicalValues(tuples=[[{ 0 }]])\n";
+    final String expected =
+        "LogicalProject(EXPR$0=[CAST(ROW(CAST(null:NULL):INTEGER, 150)):RecordType(INTEGER abc, INTEGER NOT NULL def) NOT NULL])\n"
+            + "  LogicalValues(tuples=[[{ 0 }]])\n";
     assertEquals(generated, expected);
   }
 
@@ -48,8 +49,9 @@ public class NamedStructTest {
   public void testAllNullValues() {
     final String sql = "SELECT named_struct('abc', cast(NULL as int), 'def', cast(NULL as double))";
     final String generated = sqlToRelStr(sql);
-    final String expected = "LogicalProject(EXPR$0=[CAST(ROW(CAST(null:NULL):INTEGER, CAST(null:NULL):DOUBLE)):RecordType(INTEGER abc, DOUBLE def) NOT NULL])\n" +
-        "  LogicalValues(tuples=[[{ 0 }]])\n";
+    final String expected =
+        "LogicalProject(EXPR$0=[CAST(ROW(CAST(null:NULL):INTEGER, CAST(null:NULL):DOUBLE)):RecordType(INTEGER abc, DOUBLE def) NOT NULL])\n"
+            + "  LogicalValues(tuples=[[{ 0 }]])\n";
     assertEquals(generated, expected);
   }
 
